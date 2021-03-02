@@ -1,5 +1,10 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:todo_list/services/request.dart';
+import 'package:todo_list/services/todo.dart';
 class Edit extends StatefulWidget {
   @override
   _EditState createState() => _EditState();
@@ -7,12 +12,29 @@ class Edit extends StatefulWidget {
 
 class _EditState extends State<Edit> {
   final _formKey = GlobalKey<FormState>();
+  String title = '';
+  String description = '';
+  ApiCalls _apiCalls;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.grey[900],
         elevation: 0,
+        leading: IconButton(icon: Icon(Icons.arrow_back), onPressed: (){
+          setState(() {
+            if((title?.isNotEmpty ?? true  )|| (description?.isNotEmpty ?? true))
+              {
+                _apiCalls = ApiCalls(title: title,description: description);
+                _apiCalls.createItem();
+                Navigator.pop(context);
+              }
+            else{
+              Navigator.pop(context);
+            }
+          });
+        }),
         actions: <Widget>[
           FlatButton.icon(
               onPressed: null,
@@ -44,6 +66,9 @@ class _EditState extends State<Edit> {
                   decoration: InputDecoration(
                     hintText: 'Title'
                   ),
+                  onChanged: (val){
+                    setState(() => title = val);
+                  },
                 ),
                 Expanded(
                   child: TextField(
@@ -52,6 +77,9 @@ class _EditState extends State<Edit> {
                     ),
                     maxLines: null,
                     expands: true,
+                    onChanged: (val){
+                      setState(() => description = val);
+                    },
                   ),
                 )
               ],

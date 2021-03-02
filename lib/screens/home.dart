@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 
 import 'package:http/http.dart';
+import 'package:todo_list/screens/edit.dart';
 import 'package:todo_list/services/todo.dart';
 
 class Home extends StatefulWidget {
@@ -66,7 +67,9 @@ class _HomeState extends State<Home> {
         color: Colors.red[800],),
         backgroundColor: Colors.grey[800],
         onPressed: (){
-          Navigator.pushNamed(context,'/edit');
+          Navigator.push(context,MaterialPageRoute(builder: (context){
+            return Edit();
+          }));
         },
       ),
     );
@@ -79,6 +82,8 @@ class _HomeState extends State<Home> {
         child: TextField(
           decoration: InputDecoration(
             hintText: 'Search...',
+            fillColor: Colors.grey[600],
+            filled: true,
           ),
           onChanged: (text){
             text = text.toLowerCase();
@@ -100,8 +105,8 @@ class _HomeState extends State<Home> {
       padding: const EdgeInsets.symmetric(vertical: 1.0,horizontal: 4.0),
       child: Card(
         child: ListTile(
-          title: Text(_listForDisplay[index].title),
-          subtitle: Text(_listForDisplay[index].description),
+          title: Text(_listForDisplay[index].title ?? ''),
+          subtitle: Text(_listForDisplay[index].description ?? ''),
         ),
       ),
     );
