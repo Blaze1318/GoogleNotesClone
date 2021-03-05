@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart';
 import 'package:todo_list/screens/edit.dart';
+import 'package:todo_list/screens/editItem.dart';
 import 'package:todo_list/services/todo.dart';
 
 class Home extends StatefulWidget {
@@ -13,7 +14,6 @@ class Home extends StatefulWidget {
 
 
 class _HomeState extends State<Home> {
-
   List<Todo> _list = List<Todo>();
   List<Todo> _listForDisplay = List<Todo>();
   Future<List<Todo>> getData() async
@@ -49,6 +49,7 @@ class _HomeState extends State<Home> {
   }
   @override
   Widget build(BuildContext context) {
+
     return  Scaffold(
       body: SafeArea(
         child: Container(
@@ -104,9 +105,21 @@ class _HomeState extends State<Home> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 1.0,horizontal: 4.0),
       child: Card(
+        color: Colors.grey[500],
         child: ListTile(
           title: Text(_listForDisplay[index].title ?? ''),
           subtitle: Text(_listForDisplay[index].description ?? ''),
+          onLongPress: (){
+            setState(() {
+
+            });
+          },
+          onTap: () {
+            Todo sendTodo = Todo(id:  _listForDisplay[index].id,title: _listForDisplay[index].title,description: _listForDisplay[index].description);
+            Navigator.push(context,MaterialPageRoute(builder: (context) => EditItem(),settings: RouteSettings(
+              arguments: sendTodo
+            )));
+          },
         ),
       ),
     );

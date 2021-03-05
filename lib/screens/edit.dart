@@ -1,10 +1,7 @@
-import 'dart:convert';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:todo_list/services/request.dart';
 import 'package:todo_list/services/todo.dart';
+
 class Edit extends StatefulWidget {
   @override
   _EditState createState() => _EditState();
@@ -14,6 +11,7 @@ class _EditState extends State<Edit> {
   final _formKey = GlobalKey<FormState>();
   String title = '';
   String description = '';
+
   ApiCalls _apiCalls;
 
   @override
@@ -22,18 +20,16 @@ class _EditState extends State<Edit> {
       appBar: AppBar(
         backgroundColor: Colors.grey[900],
         elevation: 0,
-        leading: IconButton(icon: Icon(Icons.arrow_back), onPressed: (){
-          setState(() {
-            if((title?.isNotEmpty ?? true  )|| (description?.isNotEmpty ?? true))
-              {
-                _apiCalls = ApiCalls(title: title,description: description);
-                _apiCalls.createItem();
-                Navigator.pop(context);
-              }
-            else{
-              Navigator.pop(context);
-            }
-          });
+        leading: IconButton(icon: Icon(Icons.arrow_back), onPressed: () async{
+          if((title?.isNotEmpty ?? true  )|| (description?.isNotEmpty ?? true))
+          {
+            _apiCalls = ApiCalls(title: title,description: description);
+            await _apiCalls.createItem();
+            Navigator.pop(context);
+          }
+          else{
+            Navigator.pop(context);
+          }
         }),
         actions: <Widget>[
           FlatButton.icon(
@@ -71,7 +67,7 @@ class _EditState extends State<Edit> {
                   },
                 ),
                 Expanded(
-                  child: TextField(
+                  child: TextFormField(
                     decoration: InputDecoration(
                       hintText: 'Description'
                     ),
