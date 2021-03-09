@@ -25,13 +25,32 @@ class _EditItemState extends State<EditItem> {
           {
             if((title?.isNotEmpty ?? true  )|| (description?.isNotEmpty ?? true))
             {
-              print("Id: ${todo.id}");
-              _apiCalls = ApiCalls(title: title,description: description);
-              await _apiCalls.updateItem(todo.id);
-              Navigator.pop(context);
+              if(title?.isNotEmpty ?? true && description?.isEmpty ?? true)
+                {
+                  description =  todo.description;
+                  print("Id: ${todo.id}");
+                  _apiCalls = ApiCalls(title: title,description: description);
+                  await _apiCalls.updateItem(todo.id);
+                  Navigator.of(context).pop();
+                }
+              else if(title?.isEmpty ?? true && description?.isNotEmpty ?? true)
+              {
+                title =  todo.title;
+                print("Id: ${todo.id}");
+                _apiCalls = ApiCalls(title: title,description: description);
+                await _apiCalls.updateItem(todo.id);
+                Navigator.of(context).pop();
+              }
+              else{
+                print("Id: ${todo.id}");
+                _apiCalls = ApiCalls(title: title,description: description);
+                await _apiCalls.updateItem(todo.id);
+                Navigator.of(context).pop();
+              }
             }
             else{
-              Navigator.pop(context);
+              print("title: $title \n description: $description");
+              Navigator.of(context).pop();
             }
           }
         }),

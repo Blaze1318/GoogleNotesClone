@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:todo_list/screens/edit.dart';
 import 'package:todo_list/screens/editItem.dart';
+import 'package:todo_list/services/request.dart';
 import 'package:todo_list/services/todo.dart';
 
 class Home extends StatefulWidget {
@@ -16,50 +17,51 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   List<Todo> _list = List<Todo>();
   List<Todo> _listForDisplay = List<Todo>();
-  Future<List<Todo>> getData() async
-  {
-    try{
-      var response = await get('http://192.168.1.16:8000/items/');
-      var items = List<Todo>();
-      if(response.statusCode == 200)
-        {
-          var listData = jsonDecode(response.body);
-          for(var itemsJson in listData)
-          {
-              items.add(Todo.fromJson(itemsJson));
-          }
-        }
-      return items;
-    }catch(e)
-    {
-      print('Caught Error $e');
-    }
-  }
-
+  ApiCalls call = new ApiCalls();
+  GlobalKey<RefreshIndicatorState> refresh;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   void initState() {
-    // TODO: implement initState
-    super.initState();
-    getData().then((value) {
+    call.getData().then((value) {
       setState(() {
         _list.addAll(value);
         _listForDisplay = _list;
       });
     });
+    refresh = GlobalKey<RefreshIndicatorState>();
+    super.initState();
+  }
+
+  Future<Null> refreshList() async{
+    await Future.delayed(Duration(seconds: 1));
+    call.getData().then((value) {
+      setState(() {
+        _list.clear();
+        _list.addAll(value);
+        _listForDisplay = _list;
+      });
+    });
+    return null;
   }
   @override
   Widget build(BuildContext context) {
-
     return  Scaffold(
+      key:_scaffoldKey,
       body: SafeArea(
-        child: Container(
-          color: Colors.grey[900],
-          child: ListView.builder(
-            itemCount: _listForDisplay.length+1,
-            itemBuilder: (context,index){
-              return index == 0? _searchBar() : _listItem(index-1);
-            },
+        child: RefreshIndicator(
+          key: refresh,
+          child: Container(
+            color: Colors.grey[900],
+            child: ListView.builder(
+              itemCount: _listForDisplay.length+1,
+              itemBuilder: (context,index){
+                return index == 0? _searchBar() : _listItem(index-1);
+              },
+            ),
           ),
+          onRefresh: () async {
+              await refreshList();
+          },
         )
       ),
       floatingActionButton: FloatingActionButton(
@@ -68,8 +70,10 @@ class _HomeState extends State<Home> {
         color: Colors.red[800],),
         backgroundColor: Colors.grey[800],
         onPressed: (){
-          Navigator.push(context,MaterialPageRoute(builder: (context){
+          Navigator.of(context).push(MaterialPageRoute(builder: (context){
             return Edit();
+          })).then((value) => setState(() {
+            refreshList();
           }));
         },
       ),
@@ -104,26 +108,44 @@ class _HomeState extends State<Home> {
   {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 1.0,horizontal: 4.0),
-      child: Card(
-        color: Colors.grey[500],
-        child: ListTile(
-          title: Text(_listForDisplay[index].title ?? ''),
-          subtitle: Text(_listForDisplay[index].description ?? ''),
-          onLongPress: (){
-            setState(() {
-
-            });
-          },
-          onTap: () {
-            Todo sendTodo = Todo(id:  _listForDisplay[index].id,title: _listForDisplay[index].title,description: _listForDisplay[index].description);
-            Navigator.push(context,MaterialPageRoute(builder: (context) => EditItem(),settings: RouteSettings(
-              arguments: sendTodo
-            )));
-          },
+      child: Dismissible(
+        key: UniqueKey(),
+        background: deleteBG(),
+        onDismissed: (direction) async{
+          await call.deleteItem(_listForDisplay[index].id);
+          setState(() {
+            _listForDisplay.removeAt(index);
+          });
+        },
+        child: Card(
+          color: Colors.grey[500],
+          child: ListTile(
+            title: Text(_listForDisplay[index].title ?? ''),
+            subtitle: Text(_listForDisplay[index].description ?? ''),
+            onTap: () {
+              Todo sendTodo = Todo(id:  _listForDisplay[index].id,title: _listForDisplay[index].title,description: _listForDisplay[index].description);
+              Navigator.of(context).push(new MaterialPageRoute(builder: (context) => EditItem(),settings: RouteSettings(
+                  arguments: sendTodo
+              ))).then((value) => setState(() => {
+                refreshList()
+              }));
+            },
+          ),
         ),
       ),
     );
   }
+
+  Widget deleteBG()
+  {
+    return Container(
+      alignment: Alignment.centerRight,
+      padding: EdgeInsets.only(right: 10),
+      color: Colors.red,
+      child: Icon(Icons.delete,color: Colors.white),
+    );
+  }
+
 
 }
 
