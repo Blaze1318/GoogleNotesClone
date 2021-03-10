@@ -15,16 +15,16 @@ class Home extends StatefulWidget {
 
 
 class _HomeState extends State<Home> {
-  List<Todo> _list = List<Todo>();
-  List<Todo> _listForDisplay = List<Todo>();
+  List<Todo?> _list = <Todo>[];
+  List<Todo?> _listForDisplay = <Todo>[];
   ApiCalls call = new ApiCalls();
-  GlobalKey<RefreshIndicatorState> refresh;
+  GlobalKey<RefreshIndicatorState>? refresh;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   void initState() {
     call.getData().then((value) {
       setState(() {
-        _list.addAll(value);
+        _list.addAll((value));
         _listForDisplay = _list;
       });
     });
@@ -86,6 +86,9 @@ class _HomeState extends State<Home> {
         padding: const EdgeInsets.all(32.0),
         child: TextField(
           decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(30)
+            ),
             hintText: 'Search...',
             fillColor: Colors.grey[600],
             filled: true,
@@ -94,7 +97,7 @@ class _HomeState extends State<Home> {
             text = text.toLowerCase();
             setState(() {
               _listForDisplay = _list.where((item) {
-                var itemTitle = item.title.toLowerCase();
+                var itemTitle = item!.title!.toLowerCase();
                 return itemTitle.contains(text);
               }).toList();
             });
@@ -112,7 +115,7 @@ class _HomeState extends State<Home> {
         key: UniqueKey(),
         background: deleteBG(),
         onDismissed: (direction) async{
-          await call.deleteItem(_listForDisplay[index].id);
+          await call.deleteItem(_listForDisplay[index]!.id);
           setState(() {
             _listForDisplay.removeAt(index);
           });
@@ -120,10 +123,10 @@ class _HomeState extends State<Home> {
         child: Card(
           color: Colors.grey[500],
           child: ListTile(
-            title: Text(_listForDisplay[index].title ?? ''),
-            subtitle: Text(_listForDisplay[index].description ?? ''),
+            title: Text(_listForDisplay[index]!.title ?? ''),
+            subtitle: Text(_listForDisplay[index]!.description ?? ''),
             onTap: () {
-              Todo sendTodo = Todo(id:  _listForDisplay[index].id,title: _listForDisplay[index].title,description: _listForDisplay[index].description);
+              Todo sendTodo = Todo(id:  _listForDisplay[index]!.id,title: _listForDisplay[index]!.title,description: _listForDisplay[index]!.description);
               Navigator.of(context).push(new MaterialPageRoute(builder: (context) => EditItem(),settings: RouteSettings(
                   arguments: sendTodo
               ))).then((value) => setState(() => {

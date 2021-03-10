@@ -9,13 +9,13 @@ class EditItem extends StatefulWidget {
 
 class _EditItemState extends State<EditItem> {
   final _formKey = GlobalKey<FormState>();
-  String title = '';
-  String description = '';
+  String? title = '';
+  String? description = '';
 
-  ApiCalls _apiCalls;
+  late ApiCalls _apiCalls;
   @override
   Widget build(BuildContext context) {
-    final Todo todo = ModalRoute.of(context).settings.arguments;
+    final Todo todo = ModalRoute.of(context)!.settings.arguments as Todo;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.grey[900],
@@ -23,9 +23,9 @@ class _EditItemState extends State<EditItem> {
         leading: IconButton(icon: Icon(Icons.arrow_back), onPressed: () async{
           if(todo != null)
           {
-            if((title?.isNotEmpty ?? true  )|| (description?.isNotEmpty ?? true))
+            if((title != null  )|| (description != null))
             {
-              if(title?.isNotEmpty ?? true && description?.isEmpty ?? true)
+              if(title != null && description == null)
                 {
                   description =  todo.description;
                   print("Id: ${todo.id}");
@@ -33,7 +33,7 @@ class _EditItemState extends State<EditItem> {
                   await _apiCalls.updateItem(todo.id);
                   Navigator.of(context).pop();
                 }
-              else if(title?.isEmpty ?? true && description?.isNotEmpty ?? true)
+              else if(title == null  && description != null)
               {
                 title =  todo.title;
                 print("Id: ${todo.id}");
@@ -83,9 +83,8 @@ class _EditItemState extends State<EditItem> {
                 children: <Widget> [
                   TextFormField(
                     initialValue: todo.title,
-
                     decoration: InputDecoration(
-                        hintText: 'Title'
+                        hintText: 'Title',
                     ),
                     onChanged: (val){
                       setState(() => title = val);
@@ -99,6 +98,10 @@ class _EditItemState extends State<EditItem> {
                       initialValue: todo.description,
                       maxLines: null,
                       expands: true,
+                      style: TextStyle(
+                          color: Colors.white,
+                        fontSize: 20
+                      ),
                       onChanged: (val){
                         setState(() => description = val);
                       },

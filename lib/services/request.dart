@@ -5,16 +5,19 @@ import 'package:todo_list/services/todo.dart';
 
 class ApiCalls
 {
-  String title;
-  String description;
+  String? title;
+  String? description;
 
   ApiCalls({this.title,this.description});
 
   Future<List<Todo>> getData() async
   {
     try{
-      var response = await http.get('http://192.168.1.16:8000/items/');
-      var items = List<Todo>();
+     // var url = 'http://192.168.1.16:8000/items/';
+      var url = Uri.http('192.168.1.16:8000', '/items/');
+
+      var response = await http.get(url);
+      var items = <Todo>[];
       if(response.statusCode == 200)
       {
         var listData = jsonDecode(response.body);
@@ -22,21 +25,23 @@ class ApiCalls
         {
           items.add(Todo.fromJson(itemsJson));
         }
+        return items;
       }
-      return items;
     }catch(e)
     {
       print('Caught Error $e');
     }
+    return [];
   }
 
   Future<void> createItem() async {
+    var url = Uri.http('192.168.1.16:8000', '/items/');
   final response = await http.post(
-    'http://192.168.1.16:8000/items/',
+    url,
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
     },
-    body: jsonEncode(<String, String>{
+    body: jsonEncode(<String, String?>{
       'title': title,
       'description': description
     }),
@@ -50,14 +55,15 @@ class ApiCalls
    }
   }
 
-  Future<void> updateItem(int id) async {
+  Future<void> updateItem(int? id) async {
     String idToString = id.toString();
+    var url = Uri.http('192.168.1.16:8000', '/items/$idToString/');
     final response = await http.put(
-      'http://192.168.1.16:8000/items/$idToString/',
+      url,
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode(<String, String>{
+      body: jsonEncode(<String, String?>{
         'title': title,
         'description': description
       }),
@@ -71,10 +77,11 @@ class ApiCalls
     }
   }
 
-  Future<void> deleteItem(int id) async {
+  Future<void> deleteItem(int? id) async {
     String idToString = id.toString();
+    var url = Uri.http('192.168.1.16:8000', '/items/$idToString/');
     final  response = await http.delete(
-      'http://192.168.1.16:8000/items/$idToString/',
+      url,
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

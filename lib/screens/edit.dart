@@ -12,7 +12,7 @@ class _EditState extends State<Edit> {
   String title = '';
   String description = '';
 
-  ApiCalls _apiCalls;
+  late ApiCalls _apiCalls;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,7 @@ class _EditState extends State<Edit> {
         backgroundColor: Colors.grey[900],
         elevation: 0,
         leading: IconButton(icon: Icon(Icons.arrow_back), onPressed: () async{
-          if((title?.isNotEmpty ?? true  )|| (description?.isNotEmpty ?? true))
+          if((title != null  )|| (description != null))
           {
             _apiCalls = ApiCalls(title: title,description: description);
             await _apiCalls.createItem();
@@ -62,6 +62,10 @@ class _EditState extends State<Edit> {
                   decoration: InputDecoration(
                     hintText: 'Title'
                   ),
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 30
+                  ),
                   onChanged: (val){
                     setState(() => title = val);
                   },
@@ -73,6 +77,10 @@ class _EditState extends State<Edit> {
                     ),
                     maxLines: null,
                     expands: true,
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20
+                    ),
                     onChanged: (val){
                       setState(() => description = val);
                     },

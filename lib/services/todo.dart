@@ -2,15 +2,15 @@ import 'package:http/http.dart';
 
 class Todo
 {
-  int id;
-  String title;
-  String description;
+  int? id;
+  String? title;
+  String? description;
 
-  Todo({this.id,this.title,this.description});
+  Todo({this.id, this.title,this.description});
 
-  Todo.fromJson(Map<String,dynamic>json)
+  Todo.fromJson(Map<String,dynamic>?json)
   {
-    id = json['id'];
+    id = json!['id'];
     title = json['title'];
     description = json['description'];
   }
