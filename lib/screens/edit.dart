@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo_list/screens/modal_settings.dart';
 import 'package:todo_list/services/request.dart';
 import 'package:todo_list/services/todo.dart';
 
@@ -16,6 +17,14 @@ class _EditState extends State<Edit> {
 
   @override
   Widget build(BuildContext context) {
+    void _showSettingsPanel()
+    {
+      showModalBottomSheet(context: context, builder:(context) {
+        return Container(
+          child: ModalSettings(),
+        );
+      });
+    }
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.grey[900],
@@ -32,21 +41,26 @@ class _EditState extends State<Edit> {
           }
         }),
         actions: <Widget>[
-          FlatButton.icon(
-              onPressed: null,
-              icon: Icon(Icons.push_pin_outlined,
-              color: Colors.black,),
-              label: Text(''),
+          Padding(
+            padding: EdgeInsets.only(right: 15),
+            child: GestureDetector(
+              onTap: null,
+              child: Icon(Icons.push_pin_outlined),
+            ),
           ),
-          FlatButton.icon(
-              onPressed: () => null,
-              icon: Icon(Icons.add_alert_outlined,color: Colors.black,),
-              label: Text('')
+          Padding(
+            padding: EdgeInsets.only(right:15),
+            child: GestureDetector(
+              onTap: null,
+              child: Icon(Icons.add_alert_outlined),
+            ),
           ),
-          FlatButton.icon(
-              onPressed: null,
-              icon: Icon(Icons.move_to_inbox_sharp,color: Colors.black,),
-              label: Text(''),
+          Padding(
+            padding: EdgeInsets.only(right:15),
+            child: GestureDetector(
+              onTap: null,
+              child: Icon(Icons.move_to_inbox_sharp),
+            ),
           ),
         ],
       ),
@@ -90,6 +104,21 @@ class _EditState extends State<Edit> {
             ),
           ),
         )
+      ),
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.grey[800],
+        child: new Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            IconButton(icon: Icon(Icons.add_box_outlined), onPressed: () {
+
+            },),
+            IconButton(icon: Icon(Icons.menu), onPressed: () {
+              _showSettingsPanel();
+            },),
+          ],
+        ),
       ),
     );
   }

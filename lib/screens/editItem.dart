@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:todo_list/services/request.dart';
 import 'package:todo_list/services/todo.dart';
 
+import 'modal_settings.dart';
+
 class EditItem extends StatefulWidget {
   @override
   _EditItemState createState() => _EditItemState();
@@ -15,6 +17,14 @@ class _EditItemState extends State<EditItem> {
   late ApiCalls _apiCalls;
   @override
   Widget build(BuildContext context) {
+    void _showSettingsPanel()
+    {
+      showModalBottomSheet(context: context, builder:(context) {
+        return Container(
+          child: ModalSettings(),
+        );
+      });
+    }
     final Todo todo = ModalRoute.of(context)!.settings.arguments as Todo;
     return Scaffold(
       appBar: AppBar(
@@ -43,6 +53,8 @@ class _EditItemState extends State<EditItem> {
               }
               else{
                 print("Id: ${todo.id}");
+                title = todo.title;
+                description = todo.description;
                 _apiCalls = ApiCalls(title: title,description: description);
                 await _apiCalls.updateItem(todo.id);
                 Navigator.of(context).pop();
@@ -55,21 +67,26 @@ class _EditItemState extends State<EditItem> {
           }
         }),
         actions: <Widget>[
-          FlatButton.icon(
-            onPressed: null,
-            icon: Icon(Icons.push_pin_outlined,
-              color: Colors.black,),
-            label: Text(''),
+         Padding(
+             padding: EdgeInsets.all(15),
+             child: GestureDetector(
+               onTap: null,
+               child: Icon(Icons.push_pin_outlined),
+             ),
+         ),
+          Padding(
+            padding: EdgeInsets.all(15),
+            child: GestureDetector(
+              onTap: null,
+              child: Icon(Icons.add_alert_outlined),
+            ),
           ),
-          FlatButton.icon(
-              onPressed: () => null,
-              icon: Icon(Icons.add_alert_outlined,color: Colors.black,),
-              label: Text('')
-          ),
-          FlatButton.icon(
-            onPressed: null,
-            icon: Icon(Icons.move_to_inbox_sharp,color: Colors.black,),
-            label: Text(''),
+          Padding(
+            padding: EdgeInsets.all(15),
+            child: GestureDetector(
+              onTap: null,
+              child: Icon(Icons.move_to_inbox_sharp),
+            ),
           ),
         ],
       ),
@@ -85,6 +102,10 @@ class _EditItemState extends State<EditItem> {
                     initialValue: todo.title,
                     decoration: InputDecoration(
                         hintText: 'Title',
+                    ),
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 30
                     ),
                     onChanged: (val){
                       setState(() => title = val);
@@ -111,6 +132,19 @@ class _EditItemState extends State<EditItem> {
               ),
             ),
           )
+      ),
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.grey[800],
+        child: new Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            IconButton(icon: Icon(Icons.add_box_outlined), onPressed: () {},),
+            IconButton(icon: Icon(Icons.menu), onPressed: () {
+              _showSettingsPanel();
+            },),
+          ],
+        ),
       ),
     );
   }

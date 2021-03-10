@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'dart:convert';
 
 import 'package:http/http.dart';
@@ -18,7 +17,9 @@ class _HomeState extends State<Home> {
   List<Todo?> _list = <Todo>[];
   List<Todo?> _listForDisplay = <Todo>[];
   ApiCalls call = new ApiCalls();
+  bool flag = false;
   GlobalKey<RefreshIndicatorState>? refresh;
+  int _selectedIndex = 0;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   void initState() {
@@ -46,17 +47,65 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.grey[900],
+      ),
+      drawer: Drawer(
+        child:Container(
+          color: Colors.grey[800],
+          child: ListView(
+            children: <Widget> [
+              DrawerHeader(
+                child:  Text("Google Keep Clone",
+                  style: TextStyle(
+                    fontSize: 40,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white
+                  ),
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.grey[900],
+                ),
+              ),
+              ListTile(
+                tileColor: Colors.grey[500],
+                selectedTileColor: Colors.grey[700],
+                leading: Icon(Icons.lightbulb_outline_sharp,color: Colors.white,),
+                title: Text("Notes",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white
+                  ),
+                ),
+              )
+            ]
+          ),
+        ),
+      ),
       key:_scaffoldKey,
       body: SafeArea(
         child: RefreshIndicator(
           key: refresh,
           child: Container(
             color: Colors.grey[900],
-            child: ListView.builder(
-              itemCount: _listForDisplay.length+1,
-              itemBuilder: (context,index){
-                return index == 0? _searchBar() : _listItem(index-1);
-              },
+            child: Column(
+              children: [
+                _searchBar(),
+                SizedBox(height: 15),
+                Expanded(
+                  child: GridView.builder(
+                            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                                maxCrossAxisExtent: 200,
+                                childAspectRatio: 3 / 2,
+                                crossAxisSpacing: 20,
+                                mainAxisSpacing: 20),
+                            itemCount: _listForDisplay.length,
+                            itemBuilder: (context,index){
+                              return _listItem(index);
+                            }),
+                ),
+              ],
             ),
           ),
           onRefresh: () async {
@@ -83,15 +132,13 @@ class _HomeState extends State<Home> {
   _searchBar()
   {
       return Padding(
-        padding: const EdgeInsets.all(32.0),
+        padding: const EdgeInsets.all(20.0),
         child: TextField(
           decoration: InputDecoration(
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(30)
-            ),
+            contentPadding: EdgeInsets.all(20),
             hintText: 'Search...',
-            fillColor: Colors.grey[600],
             filled: true,
+            fillColor: Colors.grey[800]
           ),
           onChanged: (text){
             text = text.toLowerCase();
@@ -124,7 +171,9 @@ class _HomeState extends State<Home> {
           color: Colors.grey[500],
           child: ListTile(
             title: Text(_listForDisplay[index]!.title ?? ''),
-            subtitle: Text(_listForDisplay[index]!.description ?? ''),
+            subtitle: Text(_listForDisplay[index]!.description ?? '',
+              maxLines: 4,
+            ),
             onTap: () {
               Todo sendTodo = Todo(id:  _listForDisplay[index]!.id,title: _listForDisplay[index]!.title,description: _listForDisplay[index]!.description);
               Navigator.of(context).push(new MaterialPageRoute(builder: (context) => EditItem(),settings: RouteSettings(
@@ -148,7 +197,6 @@ class _HomeState extends State<Home> {
       child: Icon(Icons.delete,color: Colors.white),
     );
   }
-
 
 }
 
