@@ -49,6 +49,22 @@ class _HomeState extends State<Home> {
     return  Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.grey[900],
+        actions: [
+          IconButton(
+            icon: Icon(Icons.all_inbox_outlined),
+            onPressed: () {
+              setState(() {
+                if(flag == false){
+                 flag = true;
+                }
+                else{
+                  flag = false;
+                }
+                print(flag);
+              });
+            },
+          )
+        ],
       ),
       drawer: Drawer(
         child:Container(
@@ -93,18 +109,7 @@ class _HomeState extends State<Home> {
               children: [
                 _searchBar(),
                 SizedBox(height: 15),
-                Expanded(
-                  child: GridView.builder(
-                            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                                maxCrossAxisExtent: 200,
-                                childAspectRatio: 3 / 2,
-                                crossAxisSpacing: 20,
-                                mainAxisSpacing: 20),
-                            itemCount: _listForDisplay.length,
-                            itemBuilder: (context,index){
-                              return _listItem(index);
-                            }),
-                ),
+                 flag == false ? _grid() : _listV(),
               ],
             ),
           ),
@@ -198,6 +203,33 @@ class _HomeState extends State<Home> {
     );
   }
 
+  _grid()
+  {
+    return Expanded(
+      child: GridView.builder(
+          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 200,
+              childAspectRatio: 3 / 2,
+              crossAxisSpacing: 20,
+              mainAxisSpacing: 20),
+          itemCount: _listForDisplay.length,
+          itemBuilder: (context,index){
+            return _listItem(index);
+          }),
+    );
+  }
+
+  _listV()
+  {
+    return Expanded(
+      child: ListView.builder(
+        itemCount: _listForDisplay.length,
+        itemBuilder: (context,index){
+          return  _listItem(index);
+        },
+      ),
+    );
+  }
 }
 
 
