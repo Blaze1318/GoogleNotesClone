@@ -22,7 +22,7 @@ class _ModalSettingsState extends State<ModalSettings> {
           ),
           ListTile(
             leading: Icon(Icons.copy,color: Colors.white,),
-            title: Text("Make a copy",
+            title: Text("Make A Copy",
               style: TextStyle(
                   color: Colors.white
               ),
