@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:todo_list/services/request.dart';
 import 'package:todo_list/services/todo.dart';
-
+import 'package:share/share.dart';
 import 'modal_settings.dart';
 
 class EditItem extends StatefulWidget {
@@ -17,15 +17,15 @@ class _EditItemState extends State<EditItem> {
   late ApiCalls _apiCalls;
   @override
   Widget build(BuildContext context) {
+    final Todo todo = ModalRoute.of(context)!.settings.arguments as Todo;
     void _showSettingsPanel()
     {
       showModalBottomSheet(context: context, builder:(context) {
         return Container(
-          child: ModalSettings(),
+          child: ModalSettings(id: todo.id,title: todo.title,description: todo.description),
         );
       });
     }
-    final Todo todo = ModalRoute.of(context)!.settings.arguments as Todo;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.grey[900],

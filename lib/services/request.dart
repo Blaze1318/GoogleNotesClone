@@ -13,7 +13,6 @@ class ApiCalls
   Future<List<Todo>> getData() async
   {
     try{
-     // var url = 'http://192.168.1.16:8000/items/';
       var url = Uri.http('192.168.1.16:8000', '/items/');
 
       var response = await http.get(url);

@@ -79,7 +79,6 @@ class _HomeState extends State<Home> {
                   flag = false;
                 }
                 savePreferences(flag);
-                print(flag);
               });
             },
           )

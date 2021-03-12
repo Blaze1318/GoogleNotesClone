@@ -10,8 +10,8 @@ class Edit extends StatefulWidget {
 
 class _EditState extends State<Edit> {
   final _formKey = GlobalKey<FormState>();
-  String title = '';
-  String description = '';
+  String? title;
+  String? description;
 
   late ApiCalls _apiCalls;
 
@@ -35,6 +35,7 @@ class _EditState extends State<Edit> {
             _apiCalls = ApiCalls(title: title,description: description);
             await _apiCalls.createItem();
             Navigator.pop(context);
+
           }
           else{
             Navigator.pop(context);
