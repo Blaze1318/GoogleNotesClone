@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
-
-import 'package:http/http.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_list/screens/edit.dart';
 import 'package:todo_list/screens/editItem.dart';
 import 'package:todo_list/services/request.dart';
@@ -19,7 +17,23 @@ class _HomeState extends State<Home> {
   ApiCalls call = new ApiCalls();
   bool flag = false;
   GlobalKey<RefreshIndicatorState>? refresh;
-  int _selectedIndex = 0;
+
+  Future<bool>savePreferences(bool flag) async
+  {
+    Future<SharedPreferences> pref = SharedPreferences.getInstance();
+    SharedPreferences prefs = await pref;
+    prefs.setBool("viewState", flag);
+    return prefs.commit();
+  }
+
+  Future<bool> getPreferences() async
+  {
+    Future<SharedPreferences> pref = SharedPreferences.getInstance();
+    SharedPreferences prefs = await pref;
+    bool flag = prefs.getBool("viewState") ?? false;
+    return flag;
+  }
+
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   void initState() {
@@ -30,6 +44,8 @@ class _HomeState extends State<Home> {
       });
     });
     refresh = GlobalKey<RefreshIndicatorState>();
+    
+    getPreferences().then((value) => updateFlag(value));
     super.initState();
   }
 
@@ -44,6 +60,8 @@ class _HomeState extends State<Home> {
     });
     return null;
   }
+
+
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
@@ -60,6 +78,7 @@ class _HomeState extends State<Home> {
                 else{
                   flag = false;
                 }
+                savePreferences(flag);
                 print(flag);
               });
             },
@@ -158,7 +177,6 @@ class _HomeState extends State<Home> {
       );
   }
 
-
   _listItem(index)
   {
     return Padding(
@@ -229,6 +247,12 @@ class _HomeState extends State<Home> {
         },
       ),
     );
+  }
+
+  updateFlag(bool value) {
+    setState(() {
+      flag = value;
+    });
   }
 }
 
