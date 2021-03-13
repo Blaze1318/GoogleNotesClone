@@ -13,9 +13,15 @@ class ModalSettings extends StatefulWidget {
 }
 
 
+
 class _ModalSettingsState extends State<ModalSettings> {
 
   late ApiCalls apiCalls;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,10 +55,12 @@ class _ModalSettingsState extends State<ModalSettings> {
                                 {
                                   apiCalls = new ApiCalls();
                                   await apiCalls.deleteItem(widget.id);
-                                  Navigator.of(context).popAndPushNamed("/");
+                                  Navigator.popUntil(
+                                      context,
+                                      ModalRoute.withName('/'));
                                 }
                               else{
-                                Navigator.pop(context);
+                                 _showToastDelete(context);
                               }
                             }, child: Text("Yes"),
                           ),
@@ -96,10 +104,12 @@ class _ModalSettingsState extends State<ModalSettings> {
                                {
                                  apiCalls = new ApiCalls(title: widget.title,description: widget.description);
                                  await apiCalls.createItem();
-                                 Navigator.of(context).popAndPushNamed("/");
+                                 Navigator.popUntil(
+                                     context,
+                                     ModalRoute.withName('/'));
                                }
                              else{
-                               Navigator.pop(context);
+                              _showToastDelete(context);
                              }
                             }, child: Text("Yes"),
                           ),
@@ -145,7 +155,7 @@ class _ModalSettingsState extends State<ModalSettings> {
                                   Navigator.pop(context);
                                 }
                               else{
-                                Navigator.pop(context);
+                                _showToastDelete(context);
                               }
 
                             }, child: Text("Yes"),
@@ -175,5 +185,16 @@ class _ModalSettingsState extends State<ModalSettings> {
         ],
       ),
     );
+  }
+
+  void _showToastDelete(BuildContext context) {
+    Navigator.popUntil(
+        context,
+        ModalRoute.withName('/'));
+    final scaffold = ScaffoldMessenger.of(context);
+    scaffold.showSnackBar(SnackBar(
+      content: const Text('Note Must Be Valid'),
+      duration: const Duration(seconds: 2),
+    ));
   }
 }
