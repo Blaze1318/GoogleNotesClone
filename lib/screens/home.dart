@@ -189,26 +189,30 @@ class _HomeState extends State<Home> {
             _listForDisplay.removeAt(index);
           });
         },
-        child: Card(
-          color: Colors.grey[500],
-          child: ListTile(
-            title: Text(_listForDisplay[index]!.title ?? ''),
-            subtitle: Text(_listForDisplay[index]!.description ?? '',
-              maxLines: 4,
+        child:  Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Card(
+            color: Colors.grey[500],
+            child: ListTile(
+              title: Text(_listForDisplay[index]!.title ?? ''),
+              subtitle: Text(_listForDisplay[index]!.description ?? '',
+                maxLines: 4,
+              ),
+              onTap: () {
+                Todo sendTodo = Todo(id:  _listForDisplay[index]!.id,title: _listForDisplay[index]!.title,description: _listForDisplay[index]!.description);
+                Navigator.of(context).push(new MaterialPageRoute(builder: (context) => EditItem(),settings: RouteSettings(
+                    arguments: sendTodo
+                ))).then((value) => setState(() => {
+                  refreshList()
+                }));
+              },
             ),
-            onTap: () {
-              Todo sendTodo = Todo(id:  _listForDisplay[index]!.id,title: _listForDisplay[index]!.title,description: _listForDisplay[index]!.description);
-              Navigator.of(context).push(new MaterialPageRoute(builder: (context) => EditItem(),settings: RouteSettings(
-                  arguments: sendTodo
-              ))).then((value) => setState(() => {
-                refreshList()
-              }));
-            },
           ),
-        ),
+        )
       ),
     );
   }
+
 
   Widget deleteBG()
   {
@@ -224,15 +228,16 @@ class _HomeState extends State<Home> {
   {
     return Expanded(
       child: GridView.builder(
-          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 200,
-              childAspectRatio: 3 / 2,
-              crossAxisSpacing: 20,
-              mainAxisSpacing: 20),
+        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+            maxCrossAxisExtent: 200,
+            childAspectRatio: 3 / 2,
+            crossAxisSpacing: 20,
+            mainAxisSpacing: 20),
           itemCount: _listForDisplay.length,
           itemBuilder: (context,index){
             return _listItem(index);
-          }),
+          }
+      ),
     );
   }
 

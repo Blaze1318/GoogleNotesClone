@@ -11,13 +11,14 @@ class EditItem extends StatefulWidget {
 
 class _EditItemState extends State<EditItem> {
   final _formKey = GlobalKey<FormState>();
-  String? title = '';
-  String? description = '';
+  String? title;
+  String? description;
 
   late ApiCalls _apiCalls;
   @override
   Widget build(BuildContext context) {
     final Todo todo = ModalRoute.of(context)!.settings.arguments as Todo;
+
     void _showSettingsPanel()
     {
       showModalBottomSheet(context: context, builder:(context) {
@@ -33,32 +34,27 @@ class _EditItemState extends State<EditItem> {
         leading: IconButton(icon: Icon(Icons.arrow_back), onPressed: () async{
           if(todo != null)
           {
-            if((title != null  )|| (description != null))
-            {
-              if(title != null && description == null)
-                {
-                  description =  todo.description;
-                  print("Id: ${todo.id}");
-                  _apiCalls = ApiCalls(title: title,description: description);
-                  await _apiCalls.updateItem(todo.id);
-                  Navigator.of(context).pop();
-                }
-              else if(title == null  && description != null)
+            if(title != null && description != null)
               {
-                title =  todo.title;
-                print("Id: ${todo.id}");
                 _apiCalls = ApiCalls(title: title,description: description);
                 await _apiCalls.updateItem(todo.id);
                 Navigator.of(context).pop();
               }
-              else{
-                print("Id: ${todo.id}");
-                title = todo.title;
-                description = todo.description;
-                _apiCalls = ApiCalls(title: title,description: description);
-                await _apiCalls.updateItem(todo.id);
-                Navigator.of(context).pop();
-              }
+            else if(title != null && description == null)
+            {
+              description =  todo.description;
+              print("Id: ${todo.id}");
+              _apiCalls = ApiCalls(title: title,description: description);
+              await _apiCalls.updateItem(todo.id);
+              Navigator.of(context).pop();
+            }
+            else if(title == null  && description != null)
+            {
+              title =  todo.title;
+              print("Id: ${todo.id}");
+              _apiCalls = ApiCalls(title: title,description: description);
+              await _apiCalls.updateItem(todo.id);
+              Navigator.of(context).pop();
             }
             else{
               print("title: $title \n description: $description");
