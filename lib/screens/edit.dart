@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:todo_list/screens/modal_settings.dart';
 import 'package:todo_list/services/request.dart';
-import 'package:todo_list/services/todo.dart';
+
 
 class Edit extends StatefulWidget {
   @override

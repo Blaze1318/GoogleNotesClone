@@ -186,7 +186,7 @@ class _HomeState extends State<Home> {
         onDismissed: (direction) async{
           await call.deleteItem(_listForDisplay[index]!.id);
           setState(() {
-            _listForDisplay.removeAt(index);
+                _listForDisplay.removeAt(index);
           });
         },
         child:  Padding(

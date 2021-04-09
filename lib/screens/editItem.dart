@@ -43,6 +43,10 @@ class _EditItemState extends State<EditItem> {
             else if(title != null && description == null)
             {
               description =  todo.description;
+              if(description == null)
+                {
+                  description = " ";
+                }
               print("Id: ${todo.id}");
               _apiCalls = ApiCalls(title: title,description: description);
               await _apiCalls.updateItem(todo.id);
@@ -51,6 +55,10 @@ class _EditItemState extends State<EditItem> {
             else if(title == null  && description != null)
             {
               title =  todo.title;
+              if(title == null)
+                {
+                  title = " ";
+                }
               print("Id: ${todo.id}");
               _apiCalls = ApiCalls(title: title,description: description);
               await _apiCalls.updateItem(todo.id);

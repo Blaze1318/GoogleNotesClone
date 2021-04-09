@@ -13,7 +13,7 @@ class ApiCalls
   Future<List<Todo>> getData() async
   {
     try{
-      var url = Uri.http('192.168.1.10:8000', '/items/');
+      var url = Uri.http('192.168.1.16:5001', '/v1/todo');
 
       var response = await http.get(url);
       var items = <Todo>[];
@@ -34,7 +34,7 @@ class ApiCalls
   }
 
   Future<void> createItem() async {
-    var url = Uri.http('192.168.1.10:8000', '/items/');
+    var url = Uri.http('192.168.1.16:5001', '/v1/todo');
   final response = await http.post(
     url,
     headers: <String, String>{
@@ -56,7 +56,7 @@ class ApiCalls
 
   Future<void> updateItem(int? id) async {
     String idToString = id.toString();
-    var url = Uri.http('192.168.1.10:8000', '/items/$idToString/');
+    var url = Uri.http('192.168.1.16:5001', '/v1/todo/$idToString');
     final response = await http.put(
       url,
       headers: <String, String>{
@@ -76,9 +76,9 @@ class ApiCalls
     }
   }
 
-  Future<void> deleteItem(int? id) async {
+  Future<String> deleteItem(int? id) async {
     String idToString = id.toString();
-    var url = Uri.http('192.168.1.10:8000', '/items/$idToString/');
+    var url = Uri.http('192.168.1.16:5001', '/v1/todo/$idToString');
     final  response = await http.delete(
       url,
       headers: <String, String>{
@@ -86,14 +86,16 @@ class ApiCalls
       },
     );
 
-    if (response.statusCode == 204) {
-      if(response.body.isEmpty)
+    if (response.statusCode == 200) {
+      if(response.body.isNotEmpty)
         {
+          return response.body;
           print("Deleted");
         }
     }
     else {
       throw Exception('Failed to delete list item.');
     }
+    return "";
   }
 }
